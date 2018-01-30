@@ -1,0 +1,8 @@
+
+.idea/
+project/project/
+*.zip
+capstone-ui/target/
+project/target/
+target/
+src/main/resources/
