@@ -1,7 +1,10 @@
 package observatory
 
+import java.time.LocalDate
+
 /**
   * Introduced in Week 1. Represents a location on the globe.
+ *
   * @param lat Degrees of latitude, -90 ≤ lat ≤ 90
   * @param lon Degrees of longitude, -180 ≤ lon ≤ 180
   */
@@ -39,4 +42,17 @@ case class CellPoint(x: Double, y: Double)
   * @param blue Level of blue, 0 ≤ blue ≤ 255
   */
 case class Color(red: Int, green: Int, blue: Int)
+
+// ***** above are coursera defined classes whose parameters cannot be modified
+// ***** below are user defined classes whose parameters that can be modified.
+
+case class StationId(stn: Option[String], wban: Option[String])
+
+case class Station(stationId: StationId, location: Location)
+
+case class StationTemperature(stationId: StationId, localDate: LocalDate, tempFahrenheit: Temperature) {
+  private def convertToFahrenheitToCelsius(tempFarenheit: Temperature) = (tempFarenheit - 32) * (5.0/9.0)
+
+  val tempCelsius = convertToFahrenheitToCelsius(tempFahrenheit)
+}
 
