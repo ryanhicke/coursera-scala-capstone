@@ -19,8 +19,21 @@ object Extraction {
     * @return A sequence containing triplets (date, location, temperature)
     */
   def locateTemperatures(year: Year, stationsFile: String, temperaturesFile: String): Iterable[(LocalDate, Location, Temperature)] = {
-    val stations = loadStationsFile(stationsFile)
-    ???
+    locateTemperaturesRDD(year, stationsFile, temperaturesFile).collect
+  }
+
+  private def locateTemperaturesRDD(year: Year, stationsFile: String, temperaturesFile: String) = {
+    val groupedStations: RDD[(StationId, Iterable[Station])] = loadStationsFile(stationsFile).groupBy(_.stationId)
+    val groupedTemperatures: RDD[(StationId, Iterable[StationTemperature])] =
+      loadTemperaturesFile(year, temperaturesFile).groupBy(_.stationId)
+    val joinedRDD: RDD[(StationId, (Iterable[Station], Iterable[StationTemperature]))] =
+      groupedStations.join(groupedTemperatures)
+    joinedRDD.flatMapValues { case (stations, temperatures) =>
+      val stationHead = stations.head
+      temperatures.map { case temp  =>
+        (temp.localDate, stationHead.location, temp.tempCelsius)
+      }
+    }.values
   }
 
   private def stringToOption[T](str: String): Option[T] =
