@@ -70,16 +70,19 @@ object Extraction {
     }
   }
 
-
   /**
     * @param records A sequence containing triplets (date, location, temperature)
     * @return A sequence containing, for each location, the average temperature over the year.
     */
   def locationYearlyAverageRecords(records: Iterable[(LocalDate, Location, Temperature)]): Iterable[(Location, Temperature)] = {
-    val groupedByLocation = SparkUtils.spark.parallelize(records.toSeq).groupBy(_._2)
-    groupedByLocation.mapValues{ locationRecords =>
-      locationRecords.foldLeft(0.0){ case (agg, record) => agg + record._3 } / locationRecords.size.toDouble
-    }.collect
+    val rdd = SparkUtils.spark.parallelize(records.toSeq)
+    locationYearlyAverageRecordsRDD(rdd).collect
   }
 
+  def locationYearlyAverageRecordsRDD(rdd: RDD[(LocalDate, Location, Temperature)]): RDD[(Location, Temperature)] = {
+    val groupedByLocation = rdd.groupBy(_._2)
+    groupedByLocation.mapValues { locationRecords =>
+      locationRecords.foldLeft(0.0) { case (agg, record) => agg + record._3 } / locationRecords.size.toDouble
+    }
+  }
 }
