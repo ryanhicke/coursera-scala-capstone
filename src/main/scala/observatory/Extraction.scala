@@ -76,7 +76,10 @@ object Extraction {
     * @return A sequence containing, for each location, the average temperature over the year.
     */
   def locationYearlyAverageRecords(records: Iterable[(LocalDate, Location, Temperature)]): Iterable[(Location, Temperature)] = {
-    ???
+    val groupedByLocation = SparkUtils.spark.parallelize(records.toSeq).groupBy(_._2)
+    groupedByLocation.mapValues{ locationRecords =>
+      locationRecords.foldLeft(0.0){ case (agg, record) => agg + record._3 } / locationRecords.size.toDouble
+    }.collect
   }
 
 }
