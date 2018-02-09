@@ -8,7 +8,11 @@ import java.time.LocalDate
   * @param lat Degrees of latitude, -90 ≤ lat ≤ 90
   * @param lon Degrees of longitude, -180 ≤ lon ≤ 180
   */
-case class Location(lat: Double, lon: Double)
+case class Location(lat: Double, lon: Double) {
+  def isAntipode(that: Location): Boolean = {
+    (that.lat == lat * -1) && (that.lon == (180 - math.abs(lon)) * (if (0 <= lon) -1 else 1))
+  }
+}
 
 /**
   * Introduced in Week 3. Represents a tiled web map tile.
