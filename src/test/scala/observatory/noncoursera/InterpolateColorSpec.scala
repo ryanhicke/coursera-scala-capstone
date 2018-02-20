@@ -1,6 +1,6 @@
 package observatory.noncoursera
 
-import observatory.{Color, Temperature, Visualization}
+import observatory.{Color, Location, Temperature, Visualization}
 import observatory.fixtures.BaseSpec
 import org.scalatest.prop.TableDrivenPropertyChecks._
 
@@ -26,7 +26,7 @@ class InterpolateColorSpec extends BaseSpec {
   it should "get interpolated values" in {
     val tests = Table(
       ("temperature", "expected"),
-      (46.0, Color(255, 127, 127)),
+      (46.0, Color(255, 128, 128)),
       (4.0, Color(85, 255, 170)),
       (-10.0, Color(0, 85, 255))
     )
@@ -35,4 +35,14 @@ class InterpolateColorSpec extends BaseSpec {
       Visualization.interpolateColor(Visualization.colors, temperature) should be(expected)
     }
   }
+
+  it should "return the largest color if the value is bigger than biggest known temp" in {
+    Visualization.interpolateColor(List((79, Color(255, 255, 255))), 100.0) should be (Color(255, 255, 255))
+  }
+
+  it should "pass test using different scale" in {
+    val scale = List((-1.0,Color(255,0,0)), (0.0,Color(0,0,255)))
+    Visualization.interpolateColor(scale, -0.75) should be (Color(191,0,64))
+  }
+
 }
