@@ -1,9 +1,10 @@
-package observatory
+package observatory.noncoursera
 
 import java.time.LocalDate
-import org.scalatest.prop.TableDrivenPropertyChecks._
 
 import observatory.fixtures.BaseSpec
+import observatory.{StationId, StationTemperature, Temperature}
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class ModelsSpec extends BaseSpec {
   val validTolerance = 0.01
